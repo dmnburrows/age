@@ -1,0 +1,32 @@
+#==============================
+rule all:
+#==============================
+    input:
+        log_snake=config['out_path']+"/log.Snakefile",
+        count_mat=expand(config['out_path']+"/TET-{ID}/TEcount_out.cntTable", ID=config["ID"])
+
+#Create log file for Snakefile
+#==============================
+rule log_snake:
+#==============================
+  output: config['out_path']+"/log.Snakefile"
+  shell:  """
+          cp ./Snakefile {output}
+          """
+
+#Run RNA mut rule
+#==============================
+rule RNA-mut:
+#==============================
+    input:
+        inp=config['in_path']+"/{ID}/Aligned.sortedByCoord.out.bam"
+    output:
+        outnpy=config['out_path']+"/{ID}/base_mismatch_perc.npy",
+        
+    conda:
+        "RNA-mut.yaml"
+
+    script:
+        """
+        RNA-mut.py
+        """
